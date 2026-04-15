@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Premium Payment Card Component</title>
+  <style>
+    :root {
+      /* Premium Matte Black & Beige/Gold Theme */
+      --card-bg-start: #434242; 
+      --card-bg-end: #000000;
+      --card-text: #ffffff; /* Soft off-white / light beige */
+      --label-color: #ffffff;
+      --accent-color: #F08C3D; /* Subtle gold/beige for focus states */
+      --error-color: #D84E61;
+      --success-color: #3EA382;
+
+      --border-idle: rgba(255, 255, 255, 0.2);
+      --font-family: "DM Sans", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f4f4f5;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    .card-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      padding: 20px;
+      font-family: var(--font-family);
+      width: 100%;
+      flex-direction: column;
+    }
+
+    Button {
+      padding: 12px 24px;
+      font-size: 1rem;
+      background-color: var(--accent-color);
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    Button:hover {
+      background-color: #D84E61;
+    }
+
+    .card-wrapper::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #D84E61 0%,  #F08C3D 50%, #3EA382 80%, #20A0CB 100%);
+      z-index: -1;
+      filter: blur(20px);
+      opacity: 0.5;
+    }
+
+    .payment-card-container {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 1;
+    }
+
+    .payment-card-container::before {
+      content: "";
+      position: absolute;
+      width: 103%;
+      height: 105%;
+      background-image: linear-gradient(135deg, #D84E61 0%,  #F08C3D 50%, #3EA382 80%, #20A0CB 100%);
+      border-radius: 25px;
+      z-index: -1;
+    }
+
+    .payment-card {
+      position: relative;
+      width: 100%;
+      max-width: 420px;
+      aspect-ratio: 1.586; /* Standard credit card ratio */
+      background: linear-gradient(135deg, var(--card-bg-start) 0%, var(--card-bg-end) 100%);
+      border-radius: 20px;
+      padding: 24px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.25);
+      color: var(--card-text);
+      min-height: 260px; 
+    }
+
+    /* Centered Logo with minimal opacity */
+    .card-background-logo {
+      position: absolute;
+      top: 50%;
+      left: 50%;                                                                           
+      transform: translate(-50%, -50%);
+      width: 90%;
+      height: 90%;
+      /* REPLACE URL WITH YOUR ATTACHED LOGO */
+      background-image: url('1-01.png'); 
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: contain;
+      opacity: 0.1; /* Adjust for subtlety */
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      z-index: 2;
+      position: relative;
+      min-height: 40px; /* Ensures space even if empty */
+    }
+
+    
+
+    .card-chip img {
+      width: 50px;
+      border-radius: 10px;
+    }
+
+    /* Reserved space for automated Oppwa Brand Icon 
+      This guarantees the top right corner stays empty for injection 
+    */
+    .card-type-icon {
+      width: 50px;
+      height: 30px;
+      background-position: right center;
+      background-repeat: no-repeat;
+      background-size: contain;
+      transition: all 0.3s ease;
+      /* Visual placeholder check - remove background-color in production if needed */
+      /* background-color: rgba(255,0,0,0.1); */ 
+    }
+
+    .card-body {
+      z-index: 2;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .card-row {
+      display: flex;
+      gap: 16px;
+      justify-content: space-between;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+
+    .full-width { width: 100%; }
+    .name-group { flex: 2; }
+    .expiry-group { flex: 1; min-width: 65px; }
+    .cvv-group { flex: 1; min-width: 50px; }
+
+    label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--label-color);
+      margin-bottom: 6px;
+      font-weight: 500;
+    }
+
+    .card-input {
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid var(--border-idle);
+      color: var(--card-text);
+      font-size: 1.15rem;
+      font-family: 'Courier New', Courier, monospace; 
+      padding: 4px 0 6px 0;
+      transition: border-color 0.3s ease;
+      width: 100%;
+      box-sizing: border-box;
+      letter-spacing: 1px;
+    }
+
+    .card-input::placeholder {
+      color: rgba(255, 255, 255, 0.241);
+    }
+
+    .card-input:focus {
+      outline: none;
+      border-bottom: 1px solid var(--accent-color);
+    }
+
+    /* Micro-interaction: Error & Success States */
+    .card-input.error { border-bottom-color: var(--error-color); }
+    .card-input.success { border-bottom-color: var(--success-color); }
+
+    /* Mobile Scaling */
+    @media (max-width: 400px) {
+      .payment-card {
+        padding: 16px;
+        aspect-ratio: auto;
+        height: auto;
+      }
+      .card-input { font-size: 1rem; }
+      .card-row { gap: 12px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card-wrapper">
+    <div class="payment-card-container">
+    <div class="payment-card">
+      
+      <div class="card-background-logo"></div>
+      
+      <div class="card-header">
+        <div class="card-chip"><img src="png-clipart-integrated-circuits-chips-smart-card-central-processing-unit-others-miscellaneous-angle-thumbnail.png" alt=""></div>
+        
+        <div class="card-type-icon" id="cardIcon"></div>
+      </div>
+
+      <div class="card-body">
+        <div class="input-group full-width">
+          <label for="cardNumber">Card Number</label>
+          <input type="text" id="cardNumber" class="card-input" placeholder="0000 0000 0000 0000" maxlength="19" autocomplete="cc-number">
+        </div>
+
+        <div class="card-row">
+          <div class="input-group name-group">
+            <label for="cardName">Cardholder Name</label>
+            <input type="text" id="cardName" class="card-input" placeholder="JOHN DOE" autocomplete="cc-name" style="text-transform: uppercase;">
+          </div>
+
+          <div class="input-group expiry-group">
+            <label for="cardExpiry">Expires</label>
+            <input type="text" id="cardExpiry" class="card-input" placeholder="MM/YY" maxlength="5" autocomplete="cc-exp">
+          </div>
+
+          <div class="input-group cvv-group">
+            <label for="cardCvv">CVV</label>
+            <input type="password" id="cardCvv" class="card-input" placeholder="123" maxlength="4" autocomplete="cc-csc">
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+    <button>Pay Now</button>
+  </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const cardNumberInput = document.getElementById('cardNumber');
+      const cardExpiryInput = document.getElementById('cardExpiry');
+      const cardCvvInput = document.getElementById('cardCvv');
+      const cardIcon = document.getElementById('cardIcon');
+
+      // Using standard Image URLs (PNGs are safest against rendering errors)
+      const icons = {
+        visa: 'https://upload.wikimedia.org/wikipedia/commons/9/98/Visa_Inc._logo_%282005%E2%80%932014%29.svg',
+        mastercard: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b7/MasterCard_Logo.svg/1280px-MasterCard_Logo.svg.png',
+        amex: 'https://cdn-icons-png.flaticon.com/512/349/349228.png'
+      };
+
+      // 1. Card Number Formatting & Brand Detection
+      cardNumberInput.addEventListener('input', function (e) {
+        // Strip non-digits
+        let value = e.target.value.replace(/\D/g, '');
+        
+        // Detect Card Type
+        let brand = '';
+        if (value.startsWith('4')) brand = 'visa';
+        else if (/^5[1-5]/.test(value)) brand = 'mastercard';
+        else if (/^3[47]/.test(value)) brand = 'amex';
+
+        // Update Icon in corner safely with quotes
+        if (brand && icons[brand]) {
+          cardIcon.style.backgroundImage = `url("${icons[brand]}")`;
+        } else {
+          cardIcon.style.backgroundImage = 'none';
+        }
+
+        // Format with spaces (every 4 digits)
+        let formattedValue = '';
+        for (let i = 0; i < value.length; i++) {
+          if (i > 0 && i % 4 === 0) formattedValue += ' ';
+          formattedValue += value[i];
+        }
+        e.target.value = formattedValue;
+
+        // Simulate Success/Error state (Basic Example: 15+ digits = success)
+        if (value.length >= 15) {
+          e.target.classList.add('success');
+          e.target.classList.remove('error');
+        } else {
+          e.target.classList.remove('success', 'error');
+        }
+      });
+
+      // 2. Expiry Formatting (MM/YY)
+      cardExpiryInput.addEventListener('input', function (e) {
+        let value = e.target.value.replace(/\D/g, '');
+        // Automatically insert the slash
+        if (value.length > 2) {
+          value = value.substring(0, 2) + '/' + value.substring(2, 4);
+        }
+        e.target.value = value;
+      });
+
+      // 3. CVV Restrictions (Numbers only)
+      cardCvvInput.addEventListener('input', function (e) {
+        e.target.value = e.target.value.replace(/\D/g, '');
+      });
+    });
+  </script>
+</body>
+</html>
